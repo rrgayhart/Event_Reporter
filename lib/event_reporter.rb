@@ -99,10 +99,10 @@ end
 
 	def help_command(command, directive_join)
 		if directive_join != ""
-			if command == "help"
-				puts "Working on it"
+			if command_list.include? directive_join
+				puts command_list[directive_join]
 			else
-			error_message
+				error_message
 			end
 		else
 			puts "Here is a list of each command available. Please type help and the command for more details."
