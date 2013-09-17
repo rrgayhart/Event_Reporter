@@ -2,12 +2,38 @@ require 'csv'
 
 class EventReporter
 
-	attr_accessor :queue
+	attr_accessor :queue, :file
 
 #-------------------------------
+# Queue Section
+
 	def queue
 		@queue ||= []
 	end
+
+	def load(file_input)
+		if file_input == ""
+			file = default_file
+		else file = file_input
+		end
+		@file = CSV.open file, headers: true
+		puts "You have now opened: #{file}."
+		#read(file)
+	end
+
+	def read(file)
+		lines = File.readlines file
+		lines.each do |line|
+  	puts line
+end
+	end
+
+	def default_file
+		"event_attendees.csv"
+	end
+
+#-------------------------------
+# Run Section
 
 	def run
 		puts "Welcome to the Event Reporter"
@@ -18,8 +44,12 @@ class EventReporter
 
 	end
 
+	#def command_list_array
+	#	["load", "queue count", "queue clear", "queue print", "queue save to", "find", "exit"]
+	#end
+
 	def command_list
-		["load", "queue count", "queue clear", "queue print", "queue save to", "find", "exit"]
+		{"load" => "Loads a CSV file that can be searched", "queue count" => "Counts the records in the queue", "queue clear" => "Clears your queue", "queue print" => "Prints your queue", "queue save to" => "Saves your queue to the specified queue", "find" => "Finds records based on your specified search attributes.", "exit" => "Exits the programm."}
 	end
 
 	def command_list_split
@@ -33,30 +63,19 @@ class EventReporter
 		process_input(input)
 	end
 
-	def help_command(command, directive, directive2, directive3)
-		if directive != ""
-			error_message
-		else
-			puts "Here is a list of each command available. Please type help and the command for more details."
-			command_list.each do |command|
-				puts command
-			end
-			prompt
-			input = gets.chomp.to_s
-			process_input(input)
-		end
-	end
-
 	def process_input(input)
 		parts = input.split(" ")
 		command = parts[0]
+		directive_array = parts[1..5]
+		directive_join = directive_array.join(" ")
 		directive = parts[1] || ""
 		directive2 = parts[2] || ""
 		directive3 = parts[3] || ""
 		case command
 			when "exit" then "Goodbye!"
-			when "help" then help_command(command, directive, directive2, directive3)
-		end
+			when "load" then load(directive_join)
+			when "help" then help_command(command, directive_join)
+	end
 
 		# command = parts[0]
 		# directive = parts[1]
@@ -75,12 +94,25 @@ class EventReporter
 		print "> "
 	end
 
-	def load(file = default_file)
-		CSV.open file, headers: true
-	end
+#-------------------------------
+# Help Section
 
-	def default_file
-		"event_attendees.csv"
+	def help_command(command, directive_join)
+		if directive_join != ""
+			if command == "help"
+				puts "Working on it"
+			else
+			error_message
+			end
+		else
+			puts "Here is a list of each command available. Please type help and the command for more details."
+			command_list.each do |command, description|
+				puts command
+			end
+			prompt
+			input = gets.chomp.to_s
+			process_input(input)
+		end
 	end
 end
 eventreporter = EventReporter.new

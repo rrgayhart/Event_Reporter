@@ -10,22 +10,30 @@ class EventReporterTest < MiniTest::Test
 		assert_kind_of EventReporter, em
 	end
 
-	def event_manager_should_provide_prompt
+	def test_process_input_for_exit
+		reporter = EventReporter.new
+		value = reporter.process_input("exit")
+		assert_equal "Goodbye!", value 
 	end
 
-	def test_queue_exists
-	end
-
-	def test_it_should_load_file
+	def test_it_should_load_default_file
+		event_reporter = EventReporter.new
+		contents = event_reporter.load
+		first_row = contents.first
+		first_name = first_row["first_Name"]
+		assert_equal "Allison", first_name
 		#Erase any loaded data and parse the specified file. If no filename is given, default to event_attendees.csv
 	end
 
-	def test_it_should_list_help_commands
+	#def test_it_should_list_help_commands
+	#	reporter = EventReporter.new
+	#	value = reporter.process_input("help")
+	#	must_include "find", value
 		#help should list all available individual commands
-	end
+	#end
 
 	def test_it_should_list_help_commands_for_a_command
-		#help <command> should output a description of how to use the specific command
+		
 	end
 
 	def test_it_should_count_the_queue
