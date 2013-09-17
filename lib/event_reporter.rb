@@ -39,9 +39,6 @@ end
 		puts "Welcome to the Event Reporter"
 		print "enter command "
 		prompt
-		input = gets.chomp.to_s
-		process_input(input)
-
 	end
 
 	#def command_list_array
@@ -55,12 +52,15 @@ end
 	def command_list_split
 	end
 
-	def error_message
+	def construction_message
 		puts "We are still working on this functionality"
 		puts "Please try another function"
 		prompt
-		input = gets.chomp.to_s
-		process_input(input)
+	end
+
+	def error_message
+		puts "I do not recognize this function. Please try again. Type help for a list of commands. Or exit to leave."
+		prompt
 	end
 
 	def process_input(input)
@@ -72,9 +72,10 @@ end
 		directive2 = parts[2] || ""
 		directive3 = parts[3] || ""
 		case command
-			when "exit" then "Goodbye!"
+			when "exit" then puts "Goodbye!"
 			when "load" then load(directive_join)
 			when "help" then help_command(command, directive_join)
+			else error_message
 	end
 
 		# command = parts[0]
@@ -92,6 +93,8 @@ end
 
 	def prompt
 		print "> "
+		input = gets.chomp.to_s
+		process_input(input)
 	end
 
 #-------------------------------
@@ -110,8 +113,6 @@ end
 				puts command
 			end
 			prompt
-			input = gets.chomp.to_s
-			process_input(input)
 		end
 	end
 end
