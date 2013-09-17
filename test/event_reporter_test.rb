@@ -3,20 +3,32 @@ require 'minitest/autorun'
 require './lib/event_reporter'
 
 class EventReporterTest < MiniTest::Test
-	def test_it_exists
-		# ASSIGN & ACTIONS
-		em = EventReporter.new
-		# ASSERTIONS
-		assert_kind_of EventReporter, em
+	def setup
+		@event = EventReporter.new
+		@list = Array.new
+	end
+
+	def test_find_should_exist
+		assert_equal "Hello", @event.find(1, 1)
+	end
+
+	def test_queue_should_exist
+		assert_equal [], @event.queue
+	end
+
+	def test_it_should_find_records_by_attribute
+		#find zipcode 20011 should work
+		#find last_name Johnson should work
+		#find state VA should work
 	end
 
 	def test_process_input_for_exit
-		reporter = EventReporter.new
-		value = reporter.process_input("exit")
-		assert_equal "Goodbye!", value 
+		skip
+		assert_equal "Goodbye!", @event.prompt
 	end
 
 	def test_it_should_load_default_file
+		skip
 		event_reporter = EventReporter.new
 		contents = event_reporter.load
 		first_row = contents.first
@@ -25,12 +37,12 @@ class EventReporterTest < MiniTest::Test
 		#Erase any loaded data and parse the specified file. If no filename is given, default to event_attendees.csv
 	end
 
-	#def test_it_should_list_help_commands
-	#	reporter = EventReporter.new
-	#	value = reporter.process_input("help")
-	#	must_include "find", value
+	def test_it_should_list_help_commands
+		#reporter = EventReporter.new
+		#value = reporter.process_input("help")
+		#must_include "find", value
 		#help should list all available individual commands
-	#end
+	end
 
 	def test_it_should_list_help_commands_for_a_command
 		
@@ -63,11 +75,7 @@ class EventReporterTest < MiniTest::Test
 		#The file should should include data and headers for last name, first name, email, zipcode, city, state, address, and phone number.
 	end
 
-	def test_it_should_find_records_by_attribute
-		#find zipcode 20011 should work
-		#find last_name Johnson should work
-		#find state VA should work
-	end
+
 
 	def search_should_be_case_insensitive
 		#"Mary" should match "mary"

@@ -16,9 +16,28 @@ class EventReporter
 			file = default_file
 		else file = file_input
 		end
-		@file = CSV.open file, headers: true
-		puts "You have now opened: #{file}."
-		#read(file)
+		@file = file
+		puts "You have now opened: #{file}"
+		format_file(file)
+	end
+
+	def clean_zipcode(zipcode)
+  	zipcode.to_s.rjust(5,"0")[0..4]
+	end
+
+	def format_file(file)
+		contents = CSV.open file, headers: true, header_converters: :symbol
+		contents.each do |row|
+			first_name = row[:first_name]
+			last_name = row[:last_name]
+			email = row[:email]
+			zipcode = clean_zipcode(row[:zipcode])
+			city = row[:city]
+			state = row[:state]
+			addess = row[:address]
+			phone = row[:phone]
+		end
+		prompt
 	end
 
 	def read(file)
@@ -30,6 +49,10 @@ end
 
 	def default_file
 		"event_attendees.csv"
+	end
+
+	def find(attribute, criteria)
+		"Hello"
 	end
 
 #-------------------------------
