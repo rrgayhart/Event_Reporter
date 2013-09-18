@@ -21,26 +21,74 @@ class EventReporter
 		end
 		@file = file
 		puts "You have now opened: #{file}"
-		format_file(file)
+		prompt
 	end
 
 	def clean_zipcode(zipcode)
   	zipcode.to_s.rjust(5,"0")[0..4]
 	end
 
-	def format_file(file)
-		contents = CSV.open file, headers: true, header_converters: :symbol
-		contents.each do |row|
+	def find_first_names(name)
+		file = @file
+		file = format_file(file)
+		file.each do |row|
 			first_name = row[:first_name]
-			last_name = row[:last_name]
-			email = row[:email]
-			zipcode = clean_zipcode(row[:zipcode])
-			city = row[:city]
-			state = row[:state]
-			addess = row[:address]
-			phone = row[:phone]
+			if first_name == name
+			 puts "#{row[:first_name]} #{row[:last_name]} "
+			 queue << row
+			end
 		end
 		prompt
+	end
+
+	def queue_command(directive, directive_array)
+		if directive == "clear"
+			clear_queue
+		elsif directive == "print"
+			print_queue
+		elsif directive == "count"
+			queue_count
+		elsif directive == "save"
+			file_name = directive_array[-1]
+			save_to(file_name)
+		else
+			error_message
+		end
+	end
+
+	def save_to(file_name)
+		puts file_name
+	end
+
+	def queue_count
+		puts queue.count
+		prompt
+	end
+
+	def print_queue
+		puts @queue
+		prompt
+	end
+
+	def clear_queue
+		@queue = []
+		prompt
+	end
+
+	def format_file(file)
+		file = @file
+		CSV.open file, headers: true, header_converters: :symbol
+		#contents.each do |row|
+		#	first_name = row[:first_name]
+		#	last_name = row[:last_name]
+		#	email = row[:email]
+		#	zipcode = clean_zipcode(row[:zipcode])
+		#	city = row[:city]
+		#	state = row[:state]
+		#	addess = row[:address]
+		#	phone = row[:phone]
+		#end
+		#prompt 
 	end
 
 	def attribute_list
@@ -65,15 +113,28 @@ end
 	end
 
 	def find_clean(directive, directive_array)
+		if @file == nil
+			puts "please load a file first"
+			prompt
+		else
 		puts directive
 		if directive == ""
 			error_message
 		elsif directive.include? "first name"
 			attribute = directive_array[2..-1]
+			attribute_string = attribute.join
+			puts attribute_string.inspect
+			find_first_names(attribute_string)
 		elsif directive.include? "last name"
 			attribute = directive_array[2..-1]
+			attribute_string = attribute.join
+			puts attribute_string.inspect
+			#find_last_names(attribute_string)
 		elsif directive.include? "email"
 			attribute = directive_array[1..-1]
+			attribute_string = attribute.join
+			puts attribute_string.inspect
+			#find_email(attribute_string)
 		elsif directive.include? "zipcode"
 			attribute = directive_array[1..-1]
 		elsif directive.include? "city"
@@ -85,6 +146,7 @@ end
 		elsif directive.include? "phone"
 			attribute = directive_array[1..-1]
 		else
+			attribute = 'error'
 			puts "This is not an attribute. Acceptable attributes are: " 
 			list_attributes
 			puts ''
@@ -99,6 +161,7 @@ end
 		#		prompt
 		#	end
 		#end
+	end
 	end
 
 #-------------------------------
@@ -145,6 +208,7 @@ end
 			when "load" then load(directive_join)
 			when "help" then help_command(command, directive_join)
 			when "find" then find_clean(directive_join, directive_array)
+			when "queue" then queue_command(directive, directive_array)
 			else error_message
 	end
 
@@ -174,6 +238,7 @@ end
 		if directive_join != ""
 			if command_list.include? directive_join
 				puts command_list[directive_join]
+				prompt
 			else
 				error_message
 			end
