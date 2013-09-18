@@ -1,4 +1,5 @@
 require 'csv'
+require 'pry'
 
 class EventReporter
 
@@ -9,6 +10,71 @@ class EventReporter
 
 	def queue
 		@queue ||= []
+	end
+
+	def queue_count
+		puts queue.count
+		prompt
+	end
+
+	def print_queue
+		puts @queue
+		prompt
+	end
+
+	def clear_queue
+		@queue = []
+		prompt
+	end
+
+	def queue_command(directive, directive_array)
+		if directive == "clear"
+			clear_queue
+		elsif directive == "print"
+			print_queue
+		elsif directive == "count"
+			queue_count
+		elsif directive == "save"
+			file_name = directive_array[-1]
+			save_to(file_name)
+		else
+			error_message
+		end
+	end
+
+#-------------------------------
+# Find Section
+	def headers
+		{"LAST NAME" => :last_name, "FIRST NAME" => :first_name, "EMAIL" => :email, "ZIPCODE" => :zipcode, "CITY" => :city, "STATE" => :state, "ADDRESS" => :address, "PHONE" => :phone}
+	end
+
+	#def new_csv
+	#	CSV.open('test_pop.csv','w', 
+  #  :write_headers=> true,
+  #  :headers => ["numerator","denominator","calculation"] #< column header
+  #) do|hdr|
+  #1.upto(12){|numerator|
+  #  1.upto(12){ |denominator|
+  #    data_out = [numerator, denominator, numerator/denominator.to_f]
+  #    hdr << data_out
+  #  }
+  #}
+	#end
+	#end
+
+	def find_first_names(name)
+		@queue = []
+		array = []
+		file = @file
+		file = format_file(file)
+		file.each do |row|
+			first_name = row[:first_name]
+			if first_name.upcase == name.upcase
+			 puts "#{row[:first_name]} #{row[:last_name]} "
+			 queue << row
+			end
+		end
+		prompt
 	end
 
 #-------------------------------
@@ -28,34 +94,6 @@ class EventReporter
   	zipcode.to_s.rjust(5,"0")[0..4]
 	end
 
-	def find_first_names(name)
-		file = @file
-		file = format_file(file)
-		file.each do |row|
-			first_name = row[:first_name]
-			if first_name == name
-			 puts "#{row[:first_name]} #{row[:last_name]} "
-			 queue << row
-			end
-		end
-		prompt
-	end
-
-	def queue_command(directive, directive_array)
-		if directive == "clear"
-			clear_queue
-		elsif directive == "print"
-			print_queue
-		elsif directive == "count"
-			queue_count
-		elsif directive == "save"
-			file_name = directive_array[-1]
-			save_to(file_name)
-		else
-			error_message
-		end
-	end
-
 	def save_to(file_name)
 		if file_name.include? '.csv'
 			puts "Saving to #{file_name}"
@@ -69,21 +107,6 @@ class EventReporter
 			end
 		end
 		prompt	
-	end
-
-	def queue_count
-		puts queue.count
-		prompt
-	end
-
-	def print_queue
-		puts @queue
-		prompt
-	end
-
-	def clear_queue
-		@queue = []
-		prompt
 	end
 
 	def format_file(file)
@@ -220,6 +243,7 @@ end
 			when "help" then help_command(command, directive_join)
 			when "find" then find_clean(directive_join, directive_array)
 			when "queue" then queue_command(directive, directive_array)
+			when "test" then new_csv
 			else error_message
 	end
 
@@ -262,5 +286,6 @@ end
 		end
 	end
 end
+#binding.pry
 eventreporter = EventReporter.new
 eventreporter.run
