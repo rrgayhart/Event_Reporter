@@ -57,7 +57,18 @@ class EventReporter
 	end
 
 	def save_to(file_name)
-		puts file_name
+		if file_name.include? '.csv'
+			puts "Saving to #{file_name}"
+			CSV.open(file_name, "wb") do |csv|
+				csv << [queue]
+			end
+		else
+			puts "A default_event_reporter0000.csv file will be generated for you, or updated if existing."
+			CSV.open("default_event_reporter0000.csv", "wb") do |csv|
+				csv << [queue]
+			end
+		end
+		prompt	
 	end
 
 	def queue_count
