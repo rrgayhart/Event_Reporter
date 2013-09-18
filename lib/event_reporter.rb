@@ -48,8 +48,10 @@ class EventReporter
 		{"LAST NAME" => :last_name, "FIRST NAME" => :first_name, "EMAIL" => :email, "ZIPCODE" => :zipcode, "CITY" => :city, "STATE" => :state, "ADDRESS" => :address, "PHONE" => :phone}
 	end
 
-	#def new_csv
-	#	CSV.open('test_pop.csv','w', 
+	def new_csv
+	file = File.open('test','w')
+	file.write ("hello")
+	file.close	
   #  :write_headers=> true,
   #  :headers => ["numerator","denominator","calculation"] #< column header
   #) do|hdr|
@@ -59,21 +61,33 @@ class EventReporter
   #    hdr << data_out
   #  }
   #}
+	end
 	#end
-	#end
+
+	def print_template
+		queue = @queue
+		queue.each do |row|
+			print row
+		end
+	end
 
 	def find_first_names(name)
 		@queue = []
 		array = []
 		file = @file
 		file = format_file(file)
+		id = 0
 		file.each do |row|
 			first_name = row[:first_name]
 			if first_name.upcase == name.upcase
-			 puts "#{row[:first_name]} #{row[:last_name]} "
-			 queue << row
+			id += 1
+			 puts "#{id} #{row[:first_name]} #{row[:last_name]} "
+			 column = {:id => id, :last_name => row[:last_name], :first_name => row[:first_name]}
+			 queue << column
+			 #queue << row
 			end
 		end
+		#queue << array
 		prompt
 	end
 
@@ -98,12 +112,12 @@ class EventReporter
 		if file_name.include? '.csv'
 			puts "Saving to #{file_name}"
 			CSV.open(file_name, "wb") do |csv|
-				csv << [queue]
+				csv << queue
 			end
 		else
 			puts "A default_event_reporter0000.csv file will be generated for you, or updated if existing."
 			CSV.open("default_event_reporter0000.csv", "wb") do |csv|
-				csv << [queue]
+				csv << queue
 			end
 		end
 		prompt	
@@ -243,7 +257,7 @@ end
 			when "help" then help_command(command, directive_join)
 			when "find" then find_clean(directive_join, directive_array)
 			when "queue" then queue_command(directive, directive_array)
-			when "test" then new_csv
+			when "test" then print_template
 			else error_message
 	end
 
