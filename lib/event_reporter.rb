@@ -11,6 +11,9 @@ class EventReporter
 		@queue ||= []
 	end
 
+#-------------------------------
+# File Section
+
 	def load(file_input)
 		if file_input == ""
 			file = default_file
@@ -40,6 +43,16 @@ class EventReporter
 		prompt
 	end
 
+	def attribute_list
+		["first name", "last name", "email", "zipcode", "city", "state", "address", "phone"]
+	end
+
+	def list_attributes
+		attribute_list.each do |a|
+			print "'#{a}'"
+		end
+	end
+
 	def read(file)
 		lines = File.readlines file
 		lines.each do |line|
@@ -51,8 +64,41 @@ end
 		"event_attendees.csv"
 	end
 
-	def find(attribute, criteria)
-		"Hello"
+	def find_clean(directive, directive_array)
+		puts directive
+		if directive == ""
+			error_message
+		elsif directive.include? "first name"
+			attribute = directive_array[2..-1]
+		elsif directive.include? "last name"
+			attribute = directive_array[2..-1]
+		elsif directive.include? "email"
+			attribute = directive_array[1..-1]
+		elsif directive.include? "zipcode"
+			attribute = directive_array[1..-1]
+		elsif directive.include? "city"
+			attribute = directive_array[1..-1]
+		elsif directive.include? "state"
+			attribute = directive_array[1..-1]
+		elsif directive.include? "address"
+			attribute = directive_array[1..-1]
+		elsif directive.include? "phone"
+			attribute = directive_array[1..-1]
+		else
+			puts "This is not an attribute. Acceptable attributes are: " 
+			list_attributes
+			puts ''
+			prompt
+		end
+		#if attribute == "" || criteria == ""
+		#	error_message
+		#else
+		#	if attribute_list.include? attribute
+		#	else
+		#		puts "This is not an attribute. Please enter your command again."
+		#		prompt
+		#	end
+		#end
 	end
 
 #-------------------------------
@@ -98,6 +144,7 @@ end
 			when "exit" then puts "Goodbye!"
 			when "load" then load(directive_join)
 			when "help" then help_command(command, directive_join)
+			when "find" then find_clean(directive_join, directive_array)
 			else error_message
 	end
 
