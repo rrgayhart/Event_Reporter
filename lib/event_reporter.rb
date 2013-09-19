@@ -6,6 +6,35 @@ class EventReporter
 	attr_accessor :queue, :file
 
 #-------------------------------
+# Test Section
+
+	def new_csv
+	queue = @queue
+	print "ID\tFirst Name\tLast Name\n"
+	queue.each do |entry|
+		print "#{entry[:id]}\t#{entry[:first_name]}\t#{entry[:last_name]}"
+	end
+  #  :write_headers=> true,
+  #  :headers => ["numerator","denominator","calculation"] #< column header
+  #) do|hdr|
+  #1.upto(12){|numerator|
+  #  1.upto(12){ |denominator|
+  #    data_out = [numerator, denominator, numerator/denominator.to_f]
+  #    hdr << data_out
+  #  }
+  #}
+	end
+	#end
+
+	def print_template
+		queue = @queue
+		print "ID\tFirst Name\tLast Name\n"
+		queue.each do |row|
+			print row
+		end
+	end
+
+#-------------------------------
 # Queue Section
 
 	def queue
@@ -54,34 +83,6 @@ class EventReporter
 
 #-------------------------------
 # Find Section
-	def headers
-		{"LAST NAME" => :last_name, "FIRST NAME" => :first_name, "EMAIL" => :email, "ZIPCODE" => :zipcode, "CITY" => :city, "STATE" => :state, "ADDRESS" => :address, "PHONE" => :phone}
-	end
-
-	def new_csv
-	queue = @queue
-	print "ID\tFirst Name\tLast Name\n"
-	queue.each do |entry|
-		print "#{entry[:id]}\t#{entry[:first_name]}\t#{entry[:last_name]}"
-	end
-  #  :write_headers=> true,
-  #  :headers => ["numerator","denominator","calculation"] #< column header
-  #) do|hdr|
-  #1.upto(12){|numerator|
-  #  1.upto(12){ |denominator|
-  #    data_out = [numerator, denominator, numerator/denominator.to_f]
-  #    hdr << data_out
-  #  }
-  #}
-	end
-	#end
-
-	def print_template
-		queue = @queue
-		queue.each do |row|
-			print row
-		end
-	end
 
 	def find_first_names(name)
 		@queue = []
@@ -94,13 +95,74 @@ class EventReporter
 			if first_name.upcase == name.upcase
 			id += 1
 			 puts "#{id} #{row[:first_name]} #{row[:last_name]} "
-			 column = {:id => id, :last_name => row[:last_name], :first_name => row[:first_name]}
-			 queue << column
-			 #queue << row
+			 #column = [id, row[:last_name], row[:first_name]]
+			 #column = {:id => id, :last_name => row[:last_name], :first_name => row[:first_name]}
+			 #queue << column
+			 queue << row
 			end
 		end
 		#queue << array
 		prompt
+	end
+
+	def find_clean(directive, directive_array)
+		directive = directive.downcase
+		if @file == nil
+			puts "No file has been loaded. The default file will be loaded"
+			load("")
+		else
+		puts "I will search the file for #{directive}" 
+		if directive == ""
+			error_message
+		elsif directive.include? "first name"
+			attribute = directive_array[2..-1]
+			attribute_string = attribute.join
+			puts attribute_string.inspect
+			find_first_names(attribute_string)
+		elsif directive.include? "last name"
+			attribute = directive_array[2..-1]
+			attribute_string = attribute.join
+			puts attribute_string.inspect
+			construction_message
+			#find_last_names(attribute_string)
+		elsif directive.include? "email"
+			attribute = directive_array[1..-1]
+			attribute_string = attribute.join
+			puts attribute_string.inspect
+			construction_message
+			#find_email(attribute_string)
+		elsif directive.include? "zipcode"
+			attribute = directive_array[1..-1]
+			construction_message
+		elsif directive.include? "city"
+			attribute = directive_array[1..-1]
+			construction_message
+		elsif directive.include? "state"
+			attribute = directive_array[1..-1]
+			construction_message
+		elsif directive.include? "address"
+			attribute = directive_array[1..-1]
+			construction_message
+		elsif directive.include? "phone"
+			attribute = directive_array[1..-1]
+			construction_message
+		else
+			attribute = 'error'
+			puts "This is not an attribute. Acceptable attributes are: " 
+			list_attributes
+			puts ''
+			prompt
+		end
+		#if attribute == "" || criteria == ""
+		#	error_message
+		#else
+		#	if attribute_list.include? attribute
+		#	else
+		#		puts "This is not an attribute. Please enter your command again."
+		#		prompt
+		#	end
+		#end
+	end
 	end
 
 #-------------------------------
@@ -173,57 +235,7 @@ end
 		"event_attendees.csv"
 	end
 
-	def find_clean(directive, directive_array)
-		if @file == nil
-			puts "please load a file first"
-			prompt
-		else
-		puts directive
-		if directive == ""
-			error_message
-		elsif directive.include? "first name"
-			attribute = directive_array[2..-1]
-			attribute_string = attribute.join
-			puts attribute_string.inspect
-			find_first_names(attribute_string)
-		elsif directive.include? "last name"
-			attribute = directive_array[2..-1]
-			attribute_string = attribute.join
-			puts attribute_string.inspect
-			#find_last_names(attribute_string)
-		elsif directive.include? "email"
-			attribute = directive_array[1..-1]
-			attribute_string = attribute.join
-			puts attribute_string.inspect
-			#find_email(attribute_string)
-		elsif directive.include? "zipcode"
-			attribute = directive_array[1..-1]
-		elsif directive.include? "city"
-			attribute = directive_array[1..-1]
-		elsif directive.include? "state"
-			attribute = directive_array[1..-1]
-		elsif directive.include? "address"
-			attribute = directive_array[1..-1]
-		elsif directive.include? "phone"
-			attribute = directive_array[1..-1]
-		else
-			attribute = 'error'
-			puts "This is not an attribute. Acceptable attributes are: " 
-			list_attributes
-			puts ''
-			prompt
-		end
-		#if attribute == "" || criteria == ""
-		#	error_message
-		#else
-		#	if attribute_list.include? attribute
-		#	else
-		#		puts "This is not an attribute. Please enter your command again."
-		#		prompt
-		#	end
-		#end
-	end
-	end
+
 
 #-------------------------------
 # Run Section
@@ -270,7 +282,11 @@ end
 			when "help" then help_command(command, directive_join)
 			when "find" then find_clean(directive_join, directive_array)
 			when "queue" then queue_command(directive, directive_array, directive3)
+			# These commands will not be used but can test out new ideas
+#-------------------Don't Forget to Delete Below-------------------
 			when "test" then new_csv
+			when "ptest" then print_template
+#-------------------Don't Forget to Delete Above-------------------
 			else error_message
 	end
 
