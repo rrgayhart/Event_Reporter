@@ -9,7 +9,7 @@ class EventReporter
 # Queue Section
 
 	def queue
-		@queue ||= []
+		@queue ||= {}
 	end
 
 	def queue_count
@@ -18,7 +18,12 @@ class EventReporter
 	end
 
 	def print_queue
-		puts @queue
+		queue = @queue
+		if queue == nil
+			puts "Nothing in queue"
+		else
+			print queue
+		end
 		prompt
 	end
 
@@ -27,11 +32,16 @@ class EventReporter
 		prompt
 	end
 
-	def queue_command(directive, directive_array)
+	def queue_command(directive, directive_array, directive3)
 		if directive == "clear"
 			clear_queue
 		elsif directive == "print"
+			if directive3 == ""
 			print_queue
+			else
+				puts directive_array[2..-1]
+				construction_message
+			end
 		elsif directive == "count"
 			queue_count
 		elsif directive == "save"
@@ -49,9 +59,11 @@ class EventReporter
 	end
 
 	def new_csv
-	file = File.open('test','w')
-	file.write ("hello")
-	file.close	
+	queue = @queue
+	print "ID\tFirst Name\tLast Name\n"
+	queue.each do |entry|
+		print "#{entry[:id]}\t#{entry[:first_name]}\t#{entry[:last_name]}"
+	end
   #  :write_headers=> true,
   #  :headers => ["numerator","denominator","calculation"] #< column header
   #) do|hdr|
@@ -109,11 +121,12 @@ class EventReporter
 	end
 
 	def save_to(file_name)
+		queue = @queue
 		if file_name.include? '.csv'
 			puts "Saving to #{file_name}"
 			CSV.open(file_name, "wb") do |csv|
-				csv << queue
-			end
+					csv << queue
+				end
 		else
 			puts "A default_event_reporter0000.csv file will be generated for you, or updated if existing."
 			CSV.open("default_event_reporter0000.csv", "wb") do |csv|
@@ -252,12 +265,12 @@ end
 		directive2 = parts[2] || ""
 		directive3 = parts[3] || ""
 		case command
-			when "exit" then puts "Goodbye!"
+			when "exit" then print "Goodbye!" "\n"
 			when "load" then load(directive_join)
 			when "help" then help_command(command, directive_join)
 			when "find" then find_clean(directive_join, directive_array)
-			when "queue" then queue_command(directive, directive_array)
-			when "test" then print_template
+			when "queue" then queue_command(directive, directive_array, directive3)
+			when "test" then new_csv
 			else error_message
 	end
 
@@ -300,6 +313,6 @@ end
 		end
 	end
 end
-#binding.pry
+binding.pry
 eventreporter = EventReporter.new
 eventreporter.run
