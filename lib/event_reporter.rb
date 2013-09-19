@@ -168,6 +168,22 @@ class EventReporter
 #-------------------------------
 # File Section
 
+	def open_file
+		contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
+		contents.each do |row|
+  	first_name = row[:first_name]
+  	last_name = row[:last_name]
+  	email = row[:email_address]
+  	phone = row[:homephone]
+  	street = row[:street]
+  	city = row[:city]
+  	state = row[:state]
+  	zipcode_dirty = row[:zipcode]
+  	zipcode = clean_zipcode(zipcode_dirty)
+  	puts "#{zipcode}"
+		end
+	end
+
 	def load(file_input)
 		if file_input == ""
 			file = default_file
@@ -246,15 +262,8 @@ end
 		prompt
 	end
 
-	#def command_list_array
-	#	["load", "queue count", "queue clear", "queue print", "queue save to", "find", "exit"]
-	#end
-
 	def command_list
 		{"load" => "Loads a CSV file that can be searched", "queue count" => "Counts the records in the queue", "queue clear" => "Clears your queue", "queue print" => "Prints your queue", "queue save to" => "Saves your queue to the specified queue", "find" => "Finds records based on your specified search attributes.", "exit" => "Exits the programm."}
-	end
-
-	def command_list_split
 	end
 
 	def construction_message
@@ -286,6 +295,7 @@ end
 #-------------------Don't Forget to Delete Below-------------------
 			when "test" then new_csv
 			when "ptest" then print_template
+			when "open" then open_file
 #-------------------Don't Forget to Delete Above-------------------
 			else error_message
 	end
